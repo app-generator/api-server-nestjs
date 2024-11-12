@@ -2,6 +2,8 @@
 
 Open-Source API server powered by [NestJS](https://app-generator.dev/docs/technologies/nestjs/index.html) a progressive Node.js framework for building efficient, reliable, and scalable server-side applications.
 
+> Status: **Work in progress**
+ 
 - 👉 [Nestjs Api Server](#) - **Complete Documentation**
 - 👉 [Get Support](https://app-generator.dev/ticket/create/) via Email and Discord
 
