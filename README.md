@@ -70,7 +70,7 @@ Info HERE
 Info HERE
 ```
 
-## Conpile [React UI](https://github.com/codedthemes/mantis-free-react-admin-template)
+## Compile [React UI](https://github.com/codedthemes/mantis-free-react-admin-template)
 
 > Edit Environment
 
