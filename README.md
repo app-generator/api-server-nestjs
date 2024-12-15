@@ -7,26 +7,19 @@ Open-Source API server powered by [NestJS](https://app-generator.dev/docs/techno
 - 👉 [Nestjs Api Server](#) - **Complete Documentation**
 - 👉 [Get Support](https://app-generator.dev/ticket/create/) via Email and Discord
 
+<br />
+
 ## Features  
 
 - Best Practices
-- Compatilble with popular React Kits
-  - Mantis
-  - Berry
 - Backend: NestJS
 - UI:
   - React Mantis 
-  - React Berry (soon) 
 
-## Deployment
-
-- [Render](https://app-generator.dev/docs/deployment/render/index.html)
-- [Fly.io](https://app-generator.dev/docs/deployment/fly-io/index.html)
-- [Vercel](https://app-generator.dev/docs/deployment/vercel/index.html)
+<br />
 
 ## Backend API
 
-- Best Practices
 - Simple, modular & intuitive structure
 - Toolchain:
   - Usable with the latest NodeJS Versions with LTS Support: 
@@ -59,12 +52,37 @@ Open-Source API server powered by [NestJS](https://app-generator.dev/docs/techno
 - Users:
   - can view and mutate only his information 
 
-## UI 
+## Start with Docker
 
-### Mantis React
+@Todo
 
-- https://github.com/codedthemes/mantis-free-react-admin-template
+## Start NestJS Backend
 
-### Berry React (soon)
+> Edit Environment
 
-- https://github.com/codedthemes/berry-free-react-admin-template
+```env
+Info HERE
+```
+
+> Commands (install deps, migrate DB, start the backend)
+
+```bash
+Info HERE
+```
+
+## Conpile [React UI](https://github.com/codedthemes/mantis-free-react-admin-template)
+
+> Edit Environment
+
+```env
+Info HERE
+```
+
+> Commands (install deps, migrate DB, start the backend)
+
+```bash
+Info HERE
+```
+
+---
+NestJS API Starter  provided by [App Generator](https://app-generator.dev/) - Open-source service for developers and companies.
