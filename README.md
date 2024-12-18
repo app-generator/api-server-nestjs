@@ -60,29 +60,69 @@ Open-Source API server powered by [NestJS](https://app-generator.dev/docs/techno
 
 > Edit Environment
 
+Add a `.env` file to your project root directory and populate as follows:
+
 ```env
-Info HERE
+AUTH0_DOMAIN=YOUR_AUTH0_DOMAIN
+AUTH0_CLIENT_ID=YOUR_AUTH0_CLIENT_ID
+AUTH0_CLIENT_SECRET=YOUR_AUTH0_CLIENT_SECRET
+
+JWT_SECRET=YOUR_JWT_SECRET
 ```
 
-> Commands (install deps, migrate DB, start the backend)
+> Run the following to install dependencies:
 
 ```bash
-Info HERE
+npm install
+```
+
+OR
+
+```bash
+yarn
+```
+
+> Now create your database
+
+If you haven't already, run the following to create your database
+
+```bash
+cd src/database
+node db-init.js
+```
+
+> Run your server
+
+```bash
+npm start
+```
+
+OR
+
+```bash
+yarn start
 ```
 
 ## Compile [React UI](https://github.com/codedthemes/mantis-free-react-admin-template)
 
 > Edit Environment
 
+Add your server base url to your environment variables as follows
+
 ```env
-Info HERE
+VITE_APP_PUBLIC_URL = <YOUR_SERVER_URL>
 ```
 
-> Commands (install deps, migrate DB, start the backend)
+> Install Dependencies
 
 ```bash
-Info HERE
+npm install
 ```
 
+OR
+
+```bash
+yarn start
+```
 ---
 NestJS API Starter  provided by [App Generator](https://app-generator.dev/) - Open-source service for developers and companies.

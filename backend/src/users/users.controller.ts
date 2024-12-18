@@ -1,55 +1,57 @@
-import {
-    Controller,
-    Get,
-    Put,
-    Delete,
-    Param,
-    Body,
-    UseGuards,
-    Request,
-    Query,
-    ForbiddenException,
-} from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, UseGuards, Put, Req } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { AuthGuard } from '@nestjs/passport';
-import { RolesGuard } from '../auth/roles.guard';
-import { Roles } from '../auth/roles.decorator';
-import { Role } from './user/user';
+import { User } from './users.entity';
+import { JwtAuthGuard } from 'src/auth/jwt.guard';
 
 @Controller('users')
 export class UsersController {
-    constructor(private usersService: UsersService) { }
+  constructor(private readonly usersService: UsersService) {}
 
-    // Public Access: Get all users with pagination
-    @Get()
-    async getAll(@Query('page') page = 1, @Query('limit') limit = 10) {
-        return this.usersService.findAll(page, limit);
+  @Get()
+  @UseGuards(JwtAuthGuard) 
+  async findAll(): Promise<User[]> {
+    return this.usersService.findAll();
+  }
+
+  @Post()
+  async createUser(@Body() user: Partial<User>): Promise<User> {
+    return this.usersService.createUser(user);
+  }
+
+  @Get(':id')
+  // @UseGuards(JwtAuthGuard) 
+  async findOne(@Param('id') id: number): Promise<User> {
+    const user = await this.usersService.findOne(id);
+    if (!user) {
+      throw new Error(`User with ID ${id} not found`);
+    }
+    return user;
+  }
+
+  @Put(':id')
+  @UseGuards(JwtAuthGuard)  // Optionally, use the guard to secure the route
+  async updateUser(
+    @Param('id') id: number, 
+    @Body() user: Partial<User>,
+    @Req() req
+  ): Promise<User> {
+    const existingUser = await this.usersService.findOne(id);
+    if (!existingUser) {
+      throw new Error(`User with ID ${id} not found`);
     }
 
-    // Public Access: Get a user by ID
-    @Get(':id')
-    getById(@Param('id') id: number) {
-        return this.usersService.findById(id);
-    }
+    // Update the user's information
+    const updatedUser = await this.usersService.updateUser(id, user);
+    return updatedUser;
+  }
 
-    // Private Access: Update user information
-    @UseGuards(AuthGuard('jwt'), RolesGuard)
-    @Roles(Role.USER, Role.ADMIN)
-    @Put(':id')
-    async update(@Param('id') id: number, @Body() userData, @Request() req) {
-        const userId = req.user.id;
-        if (userId !== +id && req.user.role !== Role.ADMIN) {
-            throw new ForbiddenException('You can only update your own profile');
-        }
-        return this.usersService.update(id, userData);
-    }
-
-    // Private Access: Delete a user
-    @UseGuards(AuthGuard('jwt'), RolesGuard)
-    @Roles(Role.ADMIN)
-    @Delete(':id')
-    async delete(@Param('id') id: number) {
-        await this.usersService.delete(id);
-        return { message: 'User deleted successfully' };
-    }
+  @Put(':id/role')
+  @UseGuards(JwtAuthGuard)
+  async updateRole(
+    @Param('id') id: number,
+    @Body('role') role: string,
+    @Req() req
+  ): Promise<User> {
+    return this.usersService.updateUserRole(id, role);
+  }
 }

@@ -1,76 +1,100 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
+import axios from 'axios';
 import { Box, TextField, Button, Typography, Grid } from '@mui/material';
 
-const EditProfile = ({ users }) => {
+const EditProfile = () => {
   const { id } = useParams(); 
-  const user = users.find(user => user.id === parseInt(id)); 
+  const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
+    email: '',
+    bio: '',
+    country: '',
+    address: '',
+    job: ''
+  });
+  const [loading, setLoading] = useState(true); // Loading state to handle API call status
 
-  console.log(user)
-    const [formData, setFormData] = useState({
-        name: user?.firstName || '',
-        surname: user?.lastName || '',
-        email: user?.email || '',
-        bio: user?.bio || '',
-        country: user?.country || '',
-        address: user?.address || '',
-        job: user?.job || ''
-      });
-    
-      // Handle input changes
-      const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        setFormData((prevData) => ({
-          ...prevData,
-          [name]: value
-        }));
-      };
-    
-      // Handle form submission (this could be an API call)
-      const handleSubmit = (e) => {
-        e.preventDefault();
-        console.log('Updated User Data:', formData);
-        alert('Profile updated successfully!');
-        // axios.post(`${process.env.PUBLIC_URL}/user/id`, formData) ---> code to update a user in a live app.
-      };
-//     firstName: '',
-//     lastName: '',
-//     email: '',
-//     bio: '',
-//     country: '',
-//     address: '',
-//     job: ''
-//   });
+  // Fetch user data from the API
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const response = await axios.get(`${import.meta.env.VITE_APP_PUBLIC_URL}/users/${id}`); 
+        const user = response.data;
+        
+        setFormData({
+          firstName: user.firstName || '',
+          lastName: user.lastName || '',
+          email: user.email || '',
+          bio: user.bio || '',
+          country: user.country || '',
+          address: user.address || '',
+          job: user.job || ''
+        });
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-//   useEffect(() => {
-//     // 🧑‍💻 Simulate fetching user data (you can replace with an API call)
-//     const fetchUserData = async () => {
-//       const dummyUserData = {
-//         firstName: 'John',
-//         lastName: 'Doe',
-//         email: 'john@example.com',
-//         bio: 'A passionate software developer.',
-//         country: 'USA',
-//         address: '123 Main St, Springfield',
-//         job: 'Frontend Developer'
-//       };
-//       setUser(dummyUserData);
-//     };
+    fetchUserData();
+  }, [id]);
 
-//     fetchUserData();
-//   }, []);
+  // Handle input changes
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value
+    }));
+  };
 
-//   const handleInputChange = (e) => {
-//     const { name, value } = e.target;
-//     setUser({ ...user, [name]: value });
-//   };
+  // Handle form submission
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      console.log('Updated User Data:', formData);
+      const user = JSON.parse(localStorage.getItem('mantis_user'))
+      console.log(user);
+      
 
-//   const handleFormSubmit = (e) => {
-//     e.preventDefault();
-//     console.log('Updated User Data:', user);
-//     alert('Profile updated successfully!');
-//     // 🧑‍💻 Send this user data to your backend API for updating
-//   };
+      if (user.id != id && user.role != "admin") throw new Error("Wrong user signed in")
+      
+        const response = await axios.put(
+        `${import.meta.env.VITE_APP_PUBLIC_URL}/users/${id}`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${user.auth_token}`,
+          },
+        }
+      );
+      console.log('Profile updated', response.data);
+      alert('Profile updated successfully!');
+    } catch (error) {
+      console.error('Error updating user data:', error);
+      alert('Failed to update profile. Please try again.');
+    }
+  };
+
+  if (loading) {
+    return (
+      <Box 
+        sx={{ 
+          width: '100%', 
+          maxWidth: 600, 
+          mx: 'auto', 
+          mt: 4, 
+          p: 3, 
+          textAlign: 'center' 
+        }}
+      >
+        <Typography variant="h5">Loading user data...</Typography>
+      </Box>
+    );
+  }
 
   return (
     <Box 
@@ -96,7 +120,7 @@ const EditProfile = ({ users }) => {
               fullWidth
               label="First Name"
               name="firstName"
-              value={user.firstName}
+              value={formData.firstName}
               onChange={handleInputChange}
               variant="outlined"
               required
@@ -108,7 +132,7 @@ const EditProfile = ({ users }) => {
               fullWidth
               label="Last Name"
               name="lastName"
-              value={user.lastName}
+              value={formData.lastName}
               onChange={handleInputChange}
               variant="outlined"
               required
@@ -121,7 +145,7 @@ const EditProfile = ({ users }) => {
               label="Email"
               name="email"
               type="email"
-              value={user.email}
+              value={formData.email}
               onChange={handleInputChange}
               variant="outlined"
               required
@@ -133,7 +157,7 @@ const EditProfile = ({ users }) => {
               fullWidth
               label="Bio"
               name="bio"
-              value={user.bio}
+              value={formData.bio}
               onChange={handleInputChange}
               variant="outlined"
               multiline
@@ -146,7 +170,7 @@ const EditProfile = ({ users }) => {
               fullWidth
               label="Country"
               name="country"
-              value={user.country}
+              value={formData.country}
               onChange={handleInputChange}
               variant="outlined"
             />
@@ -157,7 +181,7 @@ const EditProfile = ({ users }) => {
               fullWidth
               label="Address"
               name="address"
-              value={user.address}
+              value={formData.address}
               onChange={handleInputChange}
               variant="outlined"
             />
@@ -168,7 +192,7 @@ const EditProfile = ({ users }) => {
               fullWidth
               label="Job"
               name="job"
-              value={user.job}
+              value={formData.job}
               onChange={handleInputChange}
               variant="outlined"
             />
