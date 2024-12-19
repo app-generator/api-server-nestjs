@@ -2,10 +2,10 @@ const { Client } = require('pg');
 
 async function createDatabase() {
   const client = new Client({
-    host: 'localhost',
-    port: 5432,
-    user: 'postgres',
-    password: 'postgres',
+    host: `${process.env.DB_HOST || "localhost"}`,
+    port: `${process.env.DB_PORT || "5432"}`,
+    user: `${process.env.DB_USERNAME || "postgres"}`,
+    password: `${process.env.DB_PASS || "postgres"}`,
   });
 
   try {
