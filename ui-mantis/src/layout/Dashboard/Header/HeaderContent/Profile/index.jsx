@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
+import axios from 'axios'; // Added Axios for API calls
 
 // material-ui
 import { useTheme } from '@mui/material/styles';
@@ -49,13 +50,12 @@ function a11yProps(index) {
 // ==============================|| HEADER CONTENT - PROFILE ||============================== //
 
 export default function Profile() {
+  const [user, setUser] = useState(null);
   const theme = useTheme();
 
   const anchorRef = useRef(null);
   const [open, setOpen] = useState(false);
-  const handleToggle = () => {
-    setOpen((prevOpen) => !prevOpen);
-  };
+  const handleToggle = () => setOpen((prevOpen) => !prevOpen);
 
   const handleClose = (event) => {
     if (anchorRef.current && anchorRef.current.contains(event.target)) {
@@ -65,12 +65,41 @@ export default function Profile() {
   };
 
   const [value, setValue] = useState(0);
-
-  const handleChange = (event, newValue) => {
-    setValue(newValue);
-  };
+  const handleChange = (event, newValue) => setValue(newValue);
 
   const iconBackColorOpen = 'grey.100';
+
+  // 🔥 Toggle Role and Call API to update user role
+  const toggleRole = async () => {
+    if (!user) return;
+
+    const newRole = user.role === 'admin' ? 'user' : 'admin';
+    const updatedUser = { ...user, role: newRole };
+
+    try {
+      // Call API to update the role on the server
+      const response = await axios.put(`${import.meta.env.VITE_APP_PUBLIC_URL}/users/${user.id}/role`, { role: newRole }, {
+        headers: {
+          Authorization: `Bearer ${user.auth_token}`
+        }
+      });
+      if (response.status === 200) {
+        console.log('Successfully updated role to', newRole);
+        setUser(updatedUser);
+        localStorage.setItem('mantis_user', JSON.stringify(updatedUser));
+      } else {
+        console.error('Failed to update role. Status:', response.status);
+      }
+    } catch (error) {
+      console.error('Error updating role:', error);
+    }
+  };
+
+  // 🕵️‍♀️ Load user from localStorage on component mount
+  useEffect(() => {
+    const storedUser = JSON.parse(localStorage.getItem('mantis_user'));
+    setUser(storedUser || { name: 'John Doe', role: 'user' });
+  }, []);
 
   return (
     <Box sx={{ flexShrink: 0, ml: 0.75 }}>
@@ -91,10 +120,11 @@ export default function Profile() {
         <Stack direction="row" spacing={1.25} alignItems="center" sx={{ p: 0.5 }}>
           <Avatar alt="profile user" src={avatar1} size="sm" />
           <Typography variant="subtitle1" sx={{ textTransform: 'capitalize' }}>
-            John Doe
+            {user?.name || 'John Doe'}
           </Typography>
         </Stack>
       </ButtonBase>
+
       <Popper
         placement="bottom-end"
         open={open}
@@ -103,14 +133,7 @@ export default function Profile() {
         transition
         disablePortal
         popperOptions={{
-          modifiers: [
-            {
-              name: 'offset',
-              options: {
-                offset: [0, 9]
-              }
-            }
-          ]
+          modifiers: [{ name: 'offset', options: { offset: [0, 9] } }]
         }}
       >
         {({ TransitionProps }) => (
@@ -124,16 +147,16 @@ export default function Profile() {
                         <Stack direction="row" spacing={1.25} alignItems="center">
                           <Avatar alt="profile user" src={avatar1} sx={{ width: 32, height: 32 }} />
                           <Stack>
-                            <Typography variant="h6">John Doe</Typography>
+                            <Typography variant="h6">{user?.name || 'John Doe'}</Typography>
                             <Typography variant="body2" color="text.secondary">
-                              UI/UX Designer
+                              {user?.role || 'User'}
                             </Typography>
                           </Stack>
                         </Stack>
                       </Grid>
                       <Grid item>
-                        <Tooltip title="Logout">
-                          <IconButton size="large" sx={{ color: 'text.primary' }}>
+                        <Tooltip title="Switch between admin and user">
+                          <IconButton size="large" onClick={toggleRole} sx={{ color: 'text.primary' }}>
                             <LogoutOutlined />
                           </IconButton>
                         </Tooltip>
@@ -144,31 +167,20 @@ export default function Profile() {
                   <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                     <Tabs variant="fullWidth" value={value} onChange={handleChange} aria-label="profile tabs">
                       <Tab
-                        sx={{
-                          display: 'flex',
-                          flexDirection: 'row',
-                          justifyContent: 'center',
-                          alignItems: 'center',
-                          textTransform: 'capitalize'
-                        }}
+                        sx={{ display: 'flex', justifyContent: 'center', textTransform: 'capitalize' }}
                         icon={<UserOutlined style={{ marginBottom: 0, marginRight: '10px' }} />}
                         label="Profile"
                         {...a11yProps(0)}
                       />
                       <Tab
-                        sx={{
-                          display: 'flex',
-                          flexDirection: 'row',
-                          justifyContent: 'center',
-                          alignItems: 'center',
-                          textTransform: 'capitalize'
-                        }}
+                        sx={{ display: 'flex', justifyContent: 'center', textTransform: 'capitalize' }}
                         icon={<SettingOutlined style={{ marginBottom: 0, marginRight: '10px' }} />}
                         label="Setting"
                         {...a11yProps(1)}
                       />
                     </Tabs>
                   </Box>
+
                   <TabPanel value={value} index={0} dir={theme.direction}>
                     <ProfileTab />
                   </TabPanel>
@@ -185,4 +197,9 @@ export default function Profile() {
   );
 }
 
-TabPanel.propTypes = { children: PropTypes.node, value: PropTypes.number, index: PropTypes.number, other: PropTypes.any };
+TabPanel.propTypes = {
+  children: PropTypes.node,
+  value: PropTypes.number.isRequired,
+  index: PropTypes.number.isRequired,
+  other: PropTypes.object
+};

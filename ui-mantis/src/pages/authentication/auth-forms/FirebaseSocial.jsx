@@ -26,7 +26,7 @@ export default function FirebaseSocial() {
 
   const githubHandler = async () => {
     try {
-      window.location.href = 'http://localhost:3000/auth/github';
+      window.location.href = `${import.meta.env.VITE_APP_PUBLIC_URL}/auth/login`;
     } catch (error) {
       console.error('GitHub login failed:', error);
     }
