@@ -76,6 +76,24 @@ DB_USER=YOUR_DB_USERNAME
 DB_PASS=YOUR_DB_PASSWORD
 ```
 
+Here's how to get the required Auth0 details, you need to register an client (application) in your Auth0 dashboard.
+
+Follow these steps to register a client with Auth0:
+
+- Open the [Auth0 Applications](https://manage.auth0.com/?_gl=1*1a4zekg*_ga*Mjg3MzE5NzcyLjE3MzcwMjU4MzA.*_ga_QKMSDV5369*MTczNzIwMTkzNy45LjEuMTczNzIwMTk1Ni40MS4wLjA.#/applications) section of the Auth0 Dashboard.
+
+- Click on the Create Application button.
+
+- Provide a Name, such as "GitHub Auth".
+
+- Choose `Single Page Web Applications` as the application type.
+
+- Click on the Create button.
+
+- Finally, note down your `Domain`, `Client ID`, and `Client Secret` and add them to your `.env` file. Click the settings tab if you do not see them.
+
+Choose a random string of letters and nummbers for your `JWT_SECRET` and populate the `DB_` fields with the appropriate data from your database.
+
 > Run the following to install dependencies:
 
 ```bash
