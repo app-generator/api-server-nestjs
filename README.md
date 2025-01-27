@@ -92,6 +92,8 @@ Follow these steps to register a client with Auth0:
 
 - Finally, note down your `Domain`, `Client ID`, and `Client Secret` and add them to your `.env` file. Click the settings tab if you do not see them.
 
+![Auth0-dashboard](assets/auth0-dashboard.png)
+
 Choose a random string of letters and nummbers for your `JWT_SECRET` and populate the `DB_` fields with the appropriate data from your database.
 
 > Run the following to install dependencies:
