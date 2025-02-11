@@ -6,9 +6,17 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersModule } from './users/users.module';
 import { User } from './users/users.entity';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { MikroOrmModule } from '@mikro-orm/nestjs';
+import { SqliteDriver } from '@mikro-orm/sqlite';
 
 @Module({
   imports: [
+    MikroOrmModule.forRoot({
+      entities: ['./dist/entities'],
+      entitiesTs: ['./src/entities'],
+      dbName: 'server.sqlite3',
+      driver: SqliteDriver,
+    }),
     ConfigModule.forRoot({
       isGlobal: true,
     }),
