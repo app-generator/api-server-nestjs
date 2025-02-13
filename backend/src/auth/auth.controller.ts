@@ -21,7 +21,7 @@ export class AuthController {
 
     const newUserDetails = {
       firstName: user.name || user.username, // GitHub nickname as first name
-      lastName: user.email.match(/^[^@]+/)[0], 
+      lastName: user.email ? user.email.match(/^[^@]+/)[0] : '', // Extract first part of email as last name
       email: user.email || `user_${user.id}@example.com`, // Unique fallback email if not provided
       github_id: user.id, // Store the GitHub ID for future logins
       bio: 'An enterprising Serial Entrprenuer', // Dummy bio

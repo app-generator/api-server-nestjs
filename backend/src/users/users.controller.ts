@@ -1,7 +1,7 @@
-import { Controller, Get, Post, Body, Param, UseGuards, Put, Req } from '@nestjs/common';
-import { UsersService } from './users.service';
-import { User } from './users.entity';
+import { Body, Controller, Get, Param, Post, Put, UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/jwt.guard';
+import { User } from './users.entity';
+import { UsersService } from './users.service';
 
 @Controller('users')
 export class UsersController {
@@ -33,7 +33,6 @@ export class UsersController {
   async updateUser(
     @Param('id') id: number, 
     @Body() user: Partial<User>,
-    @Req() req
   ): Promise<User> {
     const existingUser = await this.usersService.findOne(id);
     if (!existingUser) {
@@ -50,7 +49,6 @@ export class UsersController {
   async updateRole(
     @Param('id') id: number,
     @Body('role') role: string,
-    @Req() req
   ): Promise<User> {
     return this.usersService.updateUserRole(id, role);
   }

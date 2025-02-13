@@ -1,18 +1,19 @@
 import { Injectable, OnApplicationBootstrap } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
 import { User } from './users.entity';
+import { InjectRepository } from '@mikro-orm/nestjs';
+import { EntityManager, EntityRepository } from '@mikro-orm/core';
 
 @Injectable()
 export class UsersService implements OnApplicationBootstrap {
   constructor(
+    private readonly em: EntityManager,
     @InjectRepository(User)
-    private userRepository: Repository<User>
+    private userRepository: EntityRepository<User>,
   ) {}
 
   // This hook runs when the app boots up
   async onApplicationBootstrap() {
-    const userCount = await this.userRepository.count();
+    const userCount = await this.em.count(User);
     if (userCount === 0) {
       await this.seedDatabase();
     }
@@ -29,7 +30,7 @@ export class UsersService implements OnApplicationBootstrap {
         address: '123 Main St, Springfield',
         job: 'Frontend Developer',
         email: 'alice@example.com',
-        role: 'user'
+        role: 'user',
       },
       {
         id: 2,
@@ -40,7 +41,7 @@ export class UsersService implements OnApplicationBootstrap {
         address: '456 Maple Ave, Toronto',
         job: 'DevOps Engineer',
         email: 'bob@example.com',
-        role: 'user'
+        role: 'user',
       },
       {
         id: 3,
@@ -51,7 +52,7 @@ export class UsersService implements OnApplicationBootstrap {
         address: '789 High St, London',
         job: 'UI/UX Designer',
         email: 'charlie@example.com',
-        role: 'user'
+        role: 'user',
       },
       {
         id: 4,
@@ -62,7 +63,7 @@ export class UsersService implements OnApplicationBootstrap {
         address: '321 Ocean Dr, Sydney',
         job: 'Backend Engineer',
         email: 'dana@example.com',
-        role: 'user'
+        role: 'user',
       },
       {
         id: 5,
@@ -73,46 +74,46 @@ export class UsersService implements OnApplicationBootstrap {
         address: '654 Gartenstr, Berlin',
         job: 'Product Manager',
         email: 'eve@example.com',
-        role: 'user'
-      }
+        role: 'user',
+      },
     ];
 
-    await this.userRepository.save(dummyUsers);
-    console.log('Database seeded with dummy users.');
+    await this.userRepository.upsertMany(dummyUsers);
   }
 
   async findAll(): Promise<User[]> {
-    return this.userRepository.find({
-      order: {
-        id: 'ASC', 
-      },
-    });
+    const users = await this.userRepository.find(
+      {},
+      { orderBy: { id: 'ASC' } },
+    );
+    return users;
   }
 
   async createUser(user: Partial<User>): Promise<User> {
-    const newUser = this.userRepository.create({...user, role: "user"});
-    return this.userRepository.save(newUser);
+    const newUser = this.userRepository.create({ ...user, role: 'user' });
+    await this.em.persistAndFlush(newUser);
+    return newUser;
   }
 
   async updateUserRole(id: number, role: string): Promise<User> {
-    await this.userRepository.update(id, { role });
-    return this.userRepository.findOneBy({id});
+    await this.userRepository.nativeUpdate(id, { role });
+    return this.userRepository.findOne({ id });
   }
 
   async findOne(id: number): Promise<User> {
-    const user = await this.userRepository.findOneBy({ id });
+    const user = await this.userRepository.find({ id });
     if (!user) {
       throw new Error(`User with ID ${id} not found`);
     }
-    return user;
+    return user[0];
   }
 
   async findUserByGithubId(githubId: string): Promise<User | undefined> {
-    return this.userRepository.findOne({ where: { github_id: githubId } });
+    return this.userRepository.findOne({ github_id: githubId });
   }
 
   async updateUser(id: number, userData: Partial<User>): Promise<User> {
-    await this.userRepository.update(id, userData); // Update the user
-    return this.userRepository.findOne({where: {id: id}}); // Return the updated user
+    await this.userRepository.nativeUpdate(id, userData); // Update the user
+    return this.userRepository.findOne({ id: id }); // Return the updated user
   }
 }

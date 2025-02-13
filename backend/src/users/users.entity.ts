@@ -1,34 +1,34 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, PrimaryKey, Property } from '@mikro-orm/core';
 
-@Entity('users')
+@Entity()
 export class User {
-  @PrimaryGeneratedColumn()
+  @PrimaryKey({autoincrement: true})
   id: number;
 
-  @Column()
+  @Property()
   firstName: string;
 
-  @Column({nullable: true})
+  @Property({nullable: true})
   lastName: string;
 
-  @Column({ type: 'text', nullable: true })
+  @Property({ type: 'text', nullable: true })
   bio: string;
 
-  @Column()
+  @Property()
   country: string;
 
-  @Column()
+  @Property()
   address: string;
 
-  @Column()
+  @Property()
   job: string;
 
-  @Column()
+  @Property()
   email: string;
 
-  @Column({ unique: true, nullable: true })
+  @Property({ unique: true, nullable: true })
   github_id: string;
 
-  @Column()
+  @Property()
   role: string;
 }
