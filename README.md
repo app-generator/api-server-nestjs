@@ -1,28 +1,28 @@
-# Nestjs Api Server
+# NestJS API Server
 
-Open-Source API server powered by [NestJS](https://app-generator.dev/docs/technologies/nestjs/index.html) a progressive Node.js framework for building efficient, reliable, and scalable server-side applications.
+Open-Source API server powered by [NestJS](https://app-generator.dev/docs/technologies/nestjs/index.html), a progressive Node.js framework for building efficient, reliable, and scalable server-side applications.
 
 > Status: **Work in progress**
- 
-- 👉 [Nestjs Api Server](#) - **Complete Documentation**
+
+- 👉 [NestJS API Server](#) - **Complete Documentation**
 - 👉 [Get Support](https://app-generator.dev/ticket/create/) via Email and Discord
 
 <br />
 
 ## Features  
 
-- Best Practices
-- Backend: NestJS
-- UI:
-  - React Mantis 
+- **Best Practices**: Follows industry-standard best practices for building robust APIs.
+- **Backend**: Built with NestJS, a powerful and scalable Node.js framework.
+- **UI**: 
+  - React Mantis (optional frontend integration).
 
 <br />
 
 ## Backend API
 
-- Simple, modular & intuitive structure
-- Toolchain:
-  - Usable with the latest NodeJS Versions with LTS Support: 
+- **Simple, modular & intuitive structure**: Easy to understand and extend.
+- **Toolchain**:
+  - Usable with the latest Node.js LTS versions:
     - v22.x
     - v21.x
     - v20.x
@@ -30,27 +30,23 @@ Open-Source API server powered by [NestJS](https://app-generator.dev/docs/techno
     - PNPM, 
     - Yarn, 
     - Npm  
-- Authentication: Auth0 for GitHub
-  - GitHub email pulled during OAuth SignIN
-  - optional: email validation
-- ROLES: Admin, Users 
-- TypeORM
-- User Profiles:
-  - ROLE: default user
-  - name, surname
-  - bio
-  - country
-  - address
-  - job
- - API:
-  - Search, Pagination 
-  - Public Access: GET: by ID, get all
-  - Private access (needs token):
-    - Create, Update, Delete
-- ADMIN:
-  - can search or mutate any user
-- Users:
-  - can view and mutate only his information 
+- **Authentication**: Auth0 for GitHub integration.
+  - GitHub email pulled during OAuth SignIN.
+  - Optional: Email validation.
+- **Roles**: Admin, Users.
+- **ORM**: Prisma for database management.
+- **User Profiles**:
+  - ROLE: Default user.
+  - Fields: Name, surname, bio, country, address, job.
+- **API Features**:
+  - Search, Pagination.
+  - Public Access: GET by ID, get all.
+  - Private access (requires token):
+    - Create, Update, Delete.
+- **Admin**:
+  - Can search or mutate any user.
+- **Users**:
+  - Can view and mutate only their own information.
 
 ## Start with Docker
 
@@ -69,32 +65,25 @@ AUTH0_CLIENT_SECRET=YOUR_AUTH0_CLIENT_SECRET
 
 JWT_SECRET=YOUR_JWT_SECRET
 
-DB_NAME=YOUR_DB_NAME
-DB_PORT=YOUR_DB_PORT
-DB_HOST=YOUR_DB_HOST
-DB_USER=YOUR_DB_USERNAME
-DB_PASS=YOUR_DB_PASSWORD
+DATABASE_URL=YOUR_DATABASE_URL
 ```
 
-Here's how to get the required Auth0 details, you need to register an client (application) in your Auth0 dashboard.
+Here's how to get the required Auth0 details. You need to register a client (application) in your Auth0 dashboard.
 
 Follow these steps to register a client with Auth0:
 
-- Open the [Auth0 Applications](https://manage.auth0.com/?_gl=1*1a4zekg*_ga*Mjg3MzE5NzcyLjE3MzcwMjU4MzA.*_ga_QKMSDV5369*MTczNzIwMTkzNy45LjEuMTczNzIwMTk1Ni40MS4wLjA.#/applications) section of the Auth0 Dashboard.
+1. Open the [Auth0 Applications](https://manage.auth0.com/?_gl=1*1a4zekg*_ga*Mjg3MzE5NzcyLjE3MzcwMjU4MzA.*_ga_QKMSDV5369*MTczNzIwMTkzNy45LjEuMTczNzIwMTk1Ni40MS4wLjA.#/applications) section of the Auth0 Dashboard.
+2. Click on the **Create Application** button.
+3. Provide a **Name**, such as "GitHub Auth".
+4. Choose `Single Page Web Applications` as the application type.
+5. Click on the **Create** button.
+6. Finally, note down your `Domain`, `Client ID`, and `Client Secret` and add them to your `.env` file. Click the settings tab if you do not see them.
 
-- Click on the Create Application button.
+Choose a random string of letters and numbers for your `JWT_SECRET` and populate the `DATABASE_URL` with your database connection string.
 
-- Provide a Name, such as "GitHub Auth".
+> Install Dependencies
 
-- Choose `Single Page Web Applications` as the application type.
-
-- Click on the Create button.
-
-- Finally, note down your `Domain`, `Client ID`, and `Client Secret` and add them to your `.env` file. Click the settings tab if you do not see them.
-
-Choose a random string of letters and nummbers for your `JWT_SECRET` and populate the `DB_` fields with the appropriate data from your database.
-
-> Run the following to install dependencies:
+Run the following to install dependencies:
 
 ```bash
 npm install
@@ -106,16 +95,24 @@ OR
 yarn
 ```
 
-> Now create your database
+> Set Up Prisma
 
-If you haven't already, run the following to create your database
+1. Run the following command to generate the Prisma client and apply migrations:
 
 ```bash
-cd src/database
-node db-init.js
+npx prisma generate
+npx prisma migrate dev --name init
 ```
 
-> Run your server
+2. If you need to seed your database, you can add a `seed` script in the `prisma/seed.ts` file and run:
+
+```bash
+npx prisma db seed
+```
+
+> Run Your Server
+
+Start the NestJS server with:
 
 ```bash
 npm start
@@ -131,10 +128,10 @@ yarn start
 
 > Edit Environment
 
-Add your server base url to your environment variables as follows
+Add your server base URL to your environment variables as follows:
 
 ```env
-VITE_APP_PUBLIC_URL = <YOUR_SERVER_URL>
+VITE_APP_PUBLIC_URL=<YOUR_SERVER_URL>
 ```
 
 > Install Dependencies
@@ -146,7 +143,20 @@ npm install
 OR
 
 ```bash
-yarn start
+yarn
 ```
+
+> Start the React UI
+
+```bash
+npm run dev
+```
+
+OR
+
+```bash
+yarn dev
+```
+
 ---
-NestJS API Starter  provided by [App Generator](https://app-generator.dev/) - Open-source service for developers and companies.
+NestJS API Starter provided by [App Generator](https://app-generator.dev/) - Open-source service for developers and companies.
