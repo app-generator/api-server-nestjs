@@ -1,6 +1,7 @@
-import { Controller, Get, Req, Res, UseGuards, Headers } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
+import { Controller, Get, Req, Res, UseGuards } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { AuthGuard } from '@nestjs/passport';
+import { User } from '@prisma/client';
 import { UsersService } from 'src/users/users.service';
 
 @Controller('auth')
@@ -21,7 +22,7 @@ export class AuthController {
 
     const newUserDetails = {
       firstName: user.name || user.username, // GitHub nickname as first name
-      lastName: user.email.match(/^[^@]+/)[0], 
+      lastName: user.email ? user.email.match(/^[^@]+/)[0] : '', 
       email: user.email || `user_${user.id}@example.com`, // Unique fallback email if not provided
       github_id: user.id, // Store the GitHub ID for future logins
       bio: 'An enterprising Serial Entrprenuer', // Dummy bio
@@ -33,7 +34,7 @@ export class AuthController {
     let existingUser = await this.usersService.findUserByGithubId(user.id);
     if (!existingUser) {
       console.log('User not found, creating new user...');
-      existingUser = await this.usersService.createUser(newUserDetails);
+      existingUser = await this.usersService.createUser(newUserDetails as User);
     } else {
       console.log('User already exists, skipping user creation.');
     }

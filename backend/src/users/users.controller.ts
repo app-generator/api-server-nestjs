@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Body, Param, UseGuards, Put, Req } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { User } from './users.entity';
+import { User } from '@prisma/client';
 import { JwtAuthGuard } from 'src/auth/jwt.guard';
 
 @Controller('users')
@@ -14,7 +14,7 @@ export class UsersController {
   }
 
   @Post()
-  async createUser(@Body() user: Partial<User>): Promise<User> {
+  async createUser(@Body() user: User): Promise<User> {
     return this.usersService.createUser(user);
   }
 
@@ -52,6 +52,6 @@ export class UsersController {
     @Body('role') role: string,
     @Req() req
   ): Promise<User> {
-    return this.usersService.updateUserRole(id, role);
+    return this.usersService.updateUserRole(+id, role);
   }
 }
