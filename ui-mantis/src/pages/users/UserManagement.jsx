@@ -1,42 +1,64 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Button } from '@mui/material';
+import {
+  Box,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Button,
+  Pagination,
+  OutlinedInput,
+  Stack
+} from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { SearchOutlined } from '@ant-design/icons';
 
+const PAGE_SIZE = 5;
 const UserManagement = () => {
   const [users, setUsers] = useState([]);
+  const [totalUsers, setTotalUsers] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
   const [loggedInUser, setLoggedInUser] = useState(null);
+  const [searchValue, setSearchValue] = useState('');
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const fetchData = async () => {
-      console.log(import.meta.env.VITE_APP_PUBLIC_URL)
-      try {
-        const urlParams = new URLSearchParams(window.location.search);
-        let user = urlParams.get('user');
+  const handlePageChange = (event, page) => {
+    setCurrentPage(page);
+  };
 
-        if (user) {
-          localStorage.setItem('mantis_user', user);
-          window.history.replaceState({}, document.title, window.location.pathname);
-        }
+  const fetchData = async (page, search) => {
+    console.log(import.meta.env.VITE_APP_PUBLIC_URL);
+    try {
+      const urlParams = new URLSearchParams(window.location.search);
+      let user = urlParams.get('user');
 
-        user = JSON.parse(localStorage.getItem('mantis_user'));
-        setLoggedInUser(user); // Set the logged-in user info
-
-        const response = await axios.get(`${import.meta.env.VITE_APP_PUBLIC_URL}/users`, {
-          headers: {
-            Authorization: `Bearer ${user.auth_token}`
-          }
-        });
-
-        setUsers(response.data);
-      } catch (error) {
-        console.error('Error fetching profile data:', error);
+      if (user) {
+        localStorage.setItem('mantis_user', user);
+        window.history.replaceState({}, document.title, window.location.pathname);
       }
-    };
 
-    fetchData();
-  }, []);
+      user = JSON.parse(localStorage.getItem('mantis_user'));
+      setLoggedInUser(user); // Set the logged-in user info
+
+      const response = await axios.get(`${import.meta.env.VITE_APP_PUBLIC_URL}/users?page=${page}&size=${PAGE_SIZE}&search=${search}`, {
+        headers: {
+          Authorization: `Bearer ${user.auth_token}`
+        }
+      });
+
+      setUsers(response.data.data);
+      setTotalUsers(response.data.meta.totalItems);
+    } catch (error) {
+      console.error('Error fetching profile data:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchData(currentPage, searchValue);
+  }, [currentPage]);
 
   const handleEditUser = (userId) => {
     navigate(`/user/edit-profile/${userId}`);
@@ -45,6 +67,17 @@ const UserManagement = () => {
   return (
     <Box sx={{ width: '100%', overflowX: 'auto' }}>
       <h1>User Management</h1>
+      <Stack direction="row" spacing={2} my={3}>
+        <OutlinedInput
+          placeholder="Email / Name"
+          startAdornment={<SearchOutlined />}
+          value={searchValue}
+          onChange={(e) => setSearchValue(e.target.value)}
+        />
+        <Button variant="contained" color="primary" onClick={() => fetchData(1, searchValue)}>
+          Search
+        </Button>
+      </Stack>
       <TableContainer
         sx={{
           width: '100%',
@@ -76,11 +109,7 @@ const UserManagement = () => {
               const isButtonEnabled = isUserRole ? isCurrentUser : true;
 
               return (
-                <TableRow
-                  key={user.id}
-                  hover
-                  sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                >
+                <TableRow key={user.id} hover sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
                   <TableCell>{user.id}</TableCell>
                   <TableCell>{user.firstName}</TableCell>
                   <TableCell>{user.lastName}</TableCell>
@@ -96,7 +125,7 @@ const UserManagement = () => {
                       size="small"
                       onClick={() => handleEditUser(user.id)}
                       disabled={!isButtonEnabled}
-                      sx={{ 
+                      sx={{
                         backgroundColor: isButtonEnabled ? 'primary.main' : 'grey.400',
                         '&:hover': { backgroundColor: isButtonEnabled ? 'primary.dark' : 'grey.400' }
                       }}
@@ -110,6 +139,14 @@ const UserManagement = () => {
           </TableBody>
         </Table>
       </TableContainer>
+      <Pagination
+        count={Math.ceil(totalUsers / PAGE_SIZE)}
+        variant="outlined"
+        shape="rounded"
+        sx={{ marginTop: 2 }}
+        page={currentPage}
+        onChange={handlePageChange}
+      />
     </Box>
   );
 };
