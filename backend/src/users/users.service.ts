@@ -6,12 +6,48 @@ import { PrismaService } from 'src/lib/prisma.service';
 export class UsersService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async findAll(): Promise<User[]> {
-    return this.prisma.user.findMany({
+  async findAll(
+    page: number,
+    size: number,
+    search?: string,
+  ): Promise<{
+    data: User[];
+    meta: {
+      totalItems: number;
+      itemsPerPage: number;
+      currentPage: number;
+      totalPages: number;
+    };
+  }> {
+    const searchClause = search
+      ? {
+          OR: [
+            { firstName: { contains: search } },
+            { lastName: { contains: search } },
+            { email: { contains: search } },
+          ],
+        }
+      : {};
+
+    const paginatedUsers = await this.prisma.user.findMany({
+      where: searchClause,
+      take: size,
+      skip: (page - 1) * size,
       orderBy: {
         id: 'asc',
       },
     });
+    const totalUsers = await this.prisma.user.count({ where: searchClause });
+
+    return {
+      data: paginatedUsers,
+      meta: {
+        totalItems: totalUsers,
+        itemsPerPage: size,
+        currentPage: page,
+        totalPages: Math.ceil(totalUsers / size),
+      },
+    };
   }
 
   async createUser(user: User): Promise<User> {

@@ -1,16 +1,37 @@
-import { Controller, Get, Post, Body, Param, UseGuards, Put, Req } from '@nestjs/common';
-import { UsersService } from './users.service';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Put,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 import { User } from '@prisma/client';
 import { JwtAuthGuard } from 'src/auth/jwt.guard';
+import { UsersService } from './users.service';
 
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Get()
-  @UseGuards(JwtAuthGuard) 
-  async findAll(): Promise<User[]> {
-    return this.usersService.findAll();
+  @UseGuards(JwtAuthGuard)
+  async findAll(
+    @Query('page') page: string,
+    @Query('size') size: string,
+    @Query('search') search: string,
+  ): Promise<{
+    data: User[];
+    meta: {
+      totalItems: number;
+      itemsPerPage: number;
+      currentPage: number;
+      totalPages: number;
+    };
+  }> {
+    return this.usersService.findAll(+page, +size, search);
   }
 
   @Post()
@@ -19,9 +40,9 @@ export class UsersController {
   }
 
   @Get(':id')
-  // @UseGuards(JwtAuthGuard) 
+  // @UseGuards(JwtAuthGuard)
   async findOne(@Param('id') id: number): Promise<User> {
-    const user = await this.usersService.findOne(id);
+    const user = await this.usersService.findOne(+id);
     if (!user) {
       throw new Error(`User with ID ${id} not found`);
     }
@@ -29,11 +50,10 @@ export class UsersController {
   }
 
   @Put(':id')
-  @UseGuards(JwtAuthGuard)  // Optionally, use the guard to secure the route
+  @UseGuards(JwtAuthGuard) // Optionally, use the guard to secure the route
   async updateUser(
-    @Param('id') id: number, 
+    @Param('id') id: number,
     @Body() user: Partial<User>,
-    @Req() req
   ): Promise<User> {
     const existingUser = await this.usersService.findOne(id);
     if (!existingUser) {
@@ -50,7 +70,6 @@ export class UsersController {
   async updateRole(
     @Param('id') id: number,
     @Body('role') role: string,
-    @Req() req
   ): Promise<User> {
     return this.usersService.updateUserRole(+id, role);
   }

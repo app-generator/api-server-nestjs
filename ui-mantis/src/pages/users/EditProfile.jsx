@@ -22,7 +22,7 @@ const EditProfile = () => {
       try {
         const response = await axios.get(`${import.meta.env.VITE_APP_PUBLIC_URL}/users/${id}`); 
         const user = response.data;
-        
+        console.log('User Data:', user);
         setFormData({
           firstName: user.firstName || '',
           lastName: user.lastName || '',
