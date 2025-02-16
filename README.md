@@ -115,13 +115,13 @@ npx prisma db seed
 Start the NestJS server with:
 
 ```bash
-npm start
+npm run start:dev
 ```
 
 OR
 
 ```bash
-yarn start
+yarn start:dev
 ```
 
 ## Compile [React UI](https://github.com/codedthemes/mantis-free-react-admin-template)
