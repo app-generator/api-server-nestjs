@@ -60,7 +60,7 @@ export class UsersService {
   }
 
   async findOne(id: number): Promise<User> {
-    const user = await this.prisma.user.findFirst({ where: { id } });
+    const user = await this.prisma.user.findFirst({ where: { id: +id } });
     if (!user) {
       throw new Error(`User with ID ${id} not found`);
     }
@@ -72,7 +72,7 @@ export class UsersService {
   }
 
   async updateUser(id: number, userData: Partial<User>): Promise<User> {
-    await this.prisma.user.update({ data: userData, where: { id } }); // Update the user
-    return this.prisma.user.findFirst({ where: { id: id } }); // Return the updated user
+    await this.prisma.user.update({ data: userData, where: { id: +id } }); // Update the user
+    return this.prisma.user.findFirst({ where: { id: +id } }); // Return the updated user
   }
 }
