@@ -15,19 +15,26 @@ import UserOutlined from '@ant-design/icons/UserOutlined';
 import WalletOutlined from '@ant-design/icons/WalletOutlined';
 
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from 'contexts/authContext.jsx';
 
 
 // ==============================|| HEADER PROFILE - PROFILE TAB ||============================== //
 
-export default function ProfileTab({ handleLogout }) {
+export default function ProfileTab({ callback }) {
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const [user, setUser] = useState({});
+  const { user, setUser, logout} = useAuth();
 
   const navigate = useNavigate();
 
   const handleListItemClick = (event, index, path) => {
     setSelectedIndex(index);
     if (path) navigate(path);
+  };
+
+  const handleLogout = () => {
+    logout()
+    callback();
+    navigate('/dashboard/default');
   };
 
   useEffect(() => {
@@ -93,5 +100,5 @@ export default function ProfileTab({ handleLogout }) {
 }
 
 ProfileTab.propTypes = {
-  handleLogout: PropTypes.func
+  callback: PropTypes.func
 };
