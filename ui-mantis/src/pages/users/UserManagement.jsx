@@ -15,6 +15,7 @@ import {
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { SearchOutlined } from '@ant-design/icons';
+import { useAuth } from 'contexts/authContext.jsx';
 
 const PAGE_SIZE = 5;
 const UserManagement = () => {
@@ -24,6 +25,7 @@ const UserManagement = () => {
   const [loggedInUser, setLoggedInUser] = useState(null);
   const [searchValue, setSearchValue] = useState('');
   const navigate = useNavigate();
+  const {setUser} = useAuth();
 
   const handlePageChange = (event, page) => {
     setCurrentPage(page);
@@ -51,6 +53,7 @@ const UserManagement = () => {
 
       setUsers(response.data.data);
       setTotalUsers(response.data.meta.totalItems);
+      setUser(user)
     } catch (error) {
       console.error('Error fetching profile data:', error);
     }

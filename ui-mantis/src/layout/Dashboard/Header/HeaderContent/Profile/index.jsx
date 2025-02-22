@@ -30,6 +30,7 @@ import LogoutOutlined from '@ant-design/icons/LogoutOutlined';
 import SettingOutlined from '@ant-design/icons/SettingOutlined';
 import UserOutlined from '@ant-design/icons/UserOutlined';
 import avatar1 from 'assets/images/users/avatar-1.png';
+import { useAuth } from 'contexts/authContext.jsx';
 
 // tab panel wrapper
 function TabPanel({ children, value, index, ...other }) {
@@ -50,8 +51,8 @@ function a11yProps(index) {
 // ==============================|| HEADER CONTENT - PROFILE ||============================== //
 
 export default function Profile() {
-  const [user, setUser] = useState(null);
   const theme = useTheme();
+  const { user, setUser } = useAuth();
 
   const anchorRef = useRef(null);
   const [open, setOpen] = useState(false);
@@ -78,11 +79,15 @@ export default function Profile() {
 
     try {
       // Call API to update the role on the server
-      const response = await axios.put(`${import.meta.env.VITE_APP_PUBLIC_URL}/users/${user.id}/role`, { role: newRole }, {
-        headers: {
-          Authorization: `Bearer ${user.auth_token}`
+      const response = await axios.put(
+        `${import.meta.env.VITE_APP_PUBLIC_URL}/users/${user.id}/role`,
+        { role: newRole },
+        {
+          headers: {
+            Authorization: `Bearer ${user.auth_token}`
+          }
         }
-      });
+      );
       if (response.status === 200) {
         console.log('Successfully updated role to', newRole);
         setUser(updatedUser);
@@ -182,7 +187,7 @@ export default function Profile() {
                   </Box>
 
                   <TabPanel value={value} index={0} dir={theme.direction}>
-                    <ProfileTab />
+                    <ProfileTab callback={() => setOpen(false)} />
                   </TabPanel>
                   <TabPanel value={value} index={1} dir={theme.direction}>
                     <SettingTab />
