@@ -25,35 +25,31 @@ const UserManagement = () => {
   const [loggedInUser, setLoggedInUser] = useState(null);
   const [searchValue, setSearchValue] = useState('');
   const navigate = useNavigate();
-  const {setUser} = useAuth();
+  const { setUser, user } = useAuth();
 
   const handlePageChange = (event, page) => {
     setCurrentPage(page);
   };
 
   const fetchData = async (page, search) => {
-    console.log(import.meta.env.VITE_APP_PUBLIC_URL);
     try {
       const urlParams = new URLSearchParams(window.location.search);
-      let user = urlParams.get('user');
+      let authUser = urlParams.get('user');
 
-      if (user) {
-        localStorage.setItem('mantis_user', user);
+      if (authUser) {
+        localStorage.setItem('mantis_user', authUser);
         window.history.replaceState({}, document.title, window.location.pathname);
       }
 
-      user = JSON.parse(localStorage.getItem('mantis_user'));
-      setLoggedInUser(user); // Set the logged-in user info
+      authUser = JSON.parse(localStorage.getItem('mantis_user'));
+      setLoggedInUser(authUser); // Set the
 
-      const response = await axios.get(`${import.meta.env.VITE_APP_PUBLIC_URL}/users?page=${page}&size=${PAGE_SIZE}&search=${search}`, {
-        headers: {
-          Authorization: `Bearer ${user.auth_token}`
-        }
-      });
+      const response = await axios.get(`${import.meta.env.VITE_APP_PUBLIC_URL}/users?page=${page}&size=${PAGE_SIZE}&search=${search}`, {});
 
       setUsers(response.data.data);
       setTotalUsers(response.data.meta.totalItems);
-      setUser(user)
+      setUser(authUser)
+      setLoggedInUser(authUser)
     } catch (error) {
       console.error('Error fetching profile data:', error);
     }
@@ -61,11 +57,29 @@ const UserManagement = () => {
 
   useEffect(() => {
     fetchData(currentPage, searchValue);
-  }, [currentPage]);
+  }, [currentPage,user]);
 
   const handleEditUser = (userId) => {
     navigate(`/user/edit-profile/${userId}`);
   };
+
+  const handleDeleteUser = async   (userId) => {
+    try {
+      const response = await axios.delete(`${import.meta.env.VITE_APP_PUBLIC_URL}/users/${userId}`, {
+        headers: {
+          Authorization: `Bearer ${user.auth_token}`
+        }
+      });
+
+      if (response.status === 200) {
+        alert('User deleted successfully');
+        fetchData(currentPage, searchValue);
+      }
+    } catch (error) {
+      console.error('Error deleting user:', error);
+    }
+  };
+
 
   return (
     <Box sx={{ width: '100%', overflowX: 'auto' }}>
@@ -122,19 +136,48 @@ const UserManagement = () => {
                   <TableCell>{user.address}</TableCell>
                   <TableCell>{user.job}</TableCell>
                   <TableCell align="center">
-                    <Button
-                      variant="contained"
-                      color={isButtonEnabled ? 'primary' : 'secondary'}
-                      size="small"
-                      onClick={() => handleEditUser(user.id)}
-                      disabled={!isButtonEnabled}
-                      sx={{
-                        backgroundColor: isButtonEnabled ? 'primary.main' : 'grey.400',
-                        '&:hover': { backgroundColor: isButtonEnabled ? 'primary.dark' : 'grey.400' }
-                      }}
-                    >
-                      Edit
-                    </Button>
+                    <>
+                      <Button
+                        variant="contained"
+                        color="info"
+                        size="small"
+                        onClick={() => navigate(`/apps/profiles/account/${user.id}`)}
+                        sx={{ marginRight: 1 }}
+                      >
+                        Detail
+                      </Button>
+
+                      <Button
+                        variant="contained"
+                        color={isButtonEnabled ? 'primary' : 'secondary'}
+                        size="small"
+                        onClick={() => handleEditUser(user.id)}
+                        disabled={(loggedInUser?.role !== 'admin' || !isButtonEnabled) && !isCurrentUser}
+                        sx={{
+                          backgroundColor: isButtonEnabled ? 'primary.main' : 'grey.400',
+                          '&:hover': { backgroundColor: isButtonEnabled ? 'primary.dark' : 'grey.400' }
+                        }}
+                      >
+                        Edit
+                      </Button>
+
+
+                      <Button
+                        variant="contained"
+                        color="error"
+                        size="small"
+                        onClick={() => handleDeleteUser(user.id)}
+                        disabled={(loggedInUser?.role !== 'admin' || !isButtonEnabled) && !isCurrentUser}
+                        sx={{
+                          marginLeft: 1,
+                          backgroundColor: isButtonEnabled ? 'error.main' : 'grey.400',
+                          '&:hover': { backgroundColor: isButtonEnabled ? 'error.dark' : 'grey.400' }
+                        }}
+                      >
+                        Delete
+                      </Button>
+
+                    </>
                   </TableCell>
                 </TableRow>
               );

@@ -58,7 +58,7 @@ export default function ProfileTab({ callback }) {
       
       <ListItemButton 
         selected={selectedIndex === 1} 
-        onClick={(event) => handleListItemClick(event, 1, '/apps/profiles/account/basic')}
+        onClick={(event) => handleListItemClick(event, 1, '/apps/profiles/account/' + user.id)}
       >
         <ListItemIcon>
           <UserOutlined />
@@ -68,7 +68,7 @@ export default function ProfileTab({ callback }) {
 
       <ListItemButton 
         selected={selectedIndex === 2} 
-        onClick={(event) => handleListItemClick(event, 2, '/apps/profiles/account/personal')}
+        onClick={(event) => handleListItemClick(event, 2, '/apps/profiles/account/' + user.id)}
       >
         <ListItemIcon>
           <ProfileOutlined />

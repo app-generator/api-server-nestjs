@@ -15,7 +15,8 @@ async function main() {
           address: '123 Main St, Springfield',
           job: 'Frontend Developer',
           email: 'alice@example.com',
-          role: 'user'
+          role: 'user',
+          picture: `https://randomuser.me/api/portraits/men/1.jpg`
         },
         {
           id: 2,
@@ -26,7 +27,8 @@ async function main() {
           address: '456 Maple Ave, Toronto',
           job: 'DevOps Engineer',
           email: 'bob@example.com',
-          role: 'user'
+          role: 'user',
+          picture: `https://randomuser.me/api/portraits/men/2.jpg` 
         },
         {
           id: 3,
@@ -37,7 +39,8 @@ async function main() {
           address: '789 High St, London',
           job: 'UI/UX Designer',
           email: 'charlie@example.com',
-          role: 'user'
+          role: 'user',
+          picture: `https://randomuser.me/api/portraits/men/3.jpg`
         },
         {
           id: 4,
@@ -48,7 +51,8 @@ async function main() {
           address: '321 Ocean Dr, Sydney',
           job: 'Backend Engineer',
           email: 'dana@example.com',
-          role: 'user'
+          role: 'user',
+          picture: `https://randomuser.me/api/portraits/men/4.jpg`
         },
         {
           id: 5,
@@ -59,7 +63,8 @@ async function main() {
           address: '654 Gartenstr, Berlin',
           job: 'Product Manager',
           email: 'eve@example.com',
-          role: 'user'
+          role: 'user',
+          picture: `https://randomuser.me/api/portraits/men/5.jpg`
         }
       ]
     })
