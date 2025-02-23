@@ -7,7 +7,6 @@ async function main() {
   const user = await prisma.user.createMany({
     data: [
         {
-          id: 1,
           firstName: 'John',
           lastName: 'Doe',
           bio: 'A passionate software developer.',
@@ -19,7 +18,6 @@ async function main() {
           picture: `https://randomuser.me/api/portraits/men/1.jpg`
         },
         {
-          id: 2,
           firstName: 'Bob',
           lastName: 'Smith',
           bio: 'DevOps specialist with a knack for automation.',
@@ -31,7 +29,6 @@ async function main() {
           picture: `https://randomuser.me/api/portraits/men/2.jpg` 
         },
         {
-          id: 3,
           firstName: 'Charlie',
           lastName: 'Brown',
           bio: 'Creative designer focused on UX/UI.',
@@ -43,7 +40,6 @@ async function main() {
           picture: `https://randomuser.me/api/portraits/men/3.jpg`
         },
         {
-          id: 4,
           firstName: 'Dana',
           lastName: 'White',
           bio: 'Experienced backend engineer specializing in Node.js.',
@@ -55,7 +51,6 @@ async function main() {
           picture: `https://randomuser.me/api/portraits/men/4.jpg`
         },
         {
-          id: 5,
           firstName: 'Eve',
           lastName: 'Adams',
           bio: 'Product manager with over 10 years of experience.',

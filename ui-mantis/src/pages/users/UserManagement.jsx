@@ -22,10 +22,10 @@ const UserManagement = () => {
   const [users, setUsers] = useState([]);
   const [totalUsers, setTotalUsers] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
-  const [loggedInUser, setLoggedInUser] = useState(null);
+
   const [searchValue, setSearchValue] = useState('');
   const navigate = useNavigate();
-  const { setUser, user } = useAuth();
+  const { setUser, user: loggedInUser } = useAuth();
 
   const handlePageChange = (event, page) => {
     setCurrentPage(page);
@@ -33,6 +33,25 @@ const UserManagement = () => {
 
   const fetchData = async (page, search) => {
     try {
+
+
+      const response = await axios.get(`${import.meta.env.VITE_APP_PUBLIC_URL}/users?page=${page}&size=${PAGE_SIZE}&search=${search}`, {});
+
+      setUsers(response.data.data);
+      setTotalUsers(response.data.meta.totalItems);
+
+    } catch (error) {
+      console.error('Error fetching profile data:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchData(currentPage, searchValue);
+  }, [currentPage, loggedInUser]);
+
+
+  useEffect(() => {
+    const checkUser = async () => {
       const urlParams = new URLSearchParams(window.location.search);
       let authUser = urlParams.get('user');
 
@@ -42,28 +61,18 @@ const UserManagement = () => {
       }
 
       authUser = JSON.parse(localStorage.getItem('mantis_user'));
-      setLoggedInUser(authUser); // Set the
-
-      const response = await axios.get(`${import.meta.env.VITE_APP_PUBLIC_URL}/users?page=${page}&size=${PAGE_SIZE}&search=${search}`, {});
-
-      setUsers(response.data.data);
-      setTotalUsers(response.data.meta.totalItems);
       setUser(authUser)
-      setLoggedInUser(authUser)
-    } catch (error) {
-      console.error('Error fetching profile data:', error);
-    }
-  };
 
-  useEffect(() => {
-    fetchData(currentPage, searchValue);
-  }, [currentPage,user]);
+    }
+
+    checkUser();
+  }, []);
 
   const handleEditUser = (userId) => {
     navigate(`/user/edit-profile/${userId}`);
   };
 
-  const handleDeleteUser = async   (userId) => {
+  const handleDeleteUser = async (userId) => {
     try {
       const response = await axios.delete(`${import.meta.env.VITE_APP_PUBLIC_URL}/users/${userId}`, {
         headers: {
