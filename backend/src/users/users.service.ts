@@ -75,4 +75,8 @@ export class UsersService {
     await this.prisma.user.update({ data: userData, where: { id: +id } }); // Update the user
     return this.prisma.user.findFirst({ where: { id: +id } }); // Return the updated user
   }
+
+  async deleteUser(id: number): Promise<void> {
+    await this.prisma.user.delete({ where: { id: +id } });
+  }
 }

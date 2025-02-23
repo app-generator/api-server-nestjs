@@ -19,10 +19,12 @@ export class Auth0Strategy extends PassportStrategy(Strategy, 'auth0') {
   }
 
   async validate(accessToken: string, refreshToken: string, profile: any, done: Function) {    
+    console.log(profile);
     const user = {
       id: profile.id,
       email: profile.emails ? profile.emails[0].value : '',
       name: profile.nickname,
+      picture: profile.picture,
       accessToken,
     };
     

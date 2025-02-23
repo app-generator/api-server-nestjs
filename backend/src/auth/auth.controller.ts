@@ -19,6 +19,7 @@ export class AuthController {
   async callback(@Req() req, @Res() res) {
     // Successful authentication, redirect to the app homepage
     const user = req.user;
+    
 
     const newUserDetails = {
       firstName: user.name || user.username, // GitHub nickname as first name
@@ -29,6 +30,7 @@ export class AuthController {
       job: "Entrepreneur",
       address: "234 Main St, Springfield",
       country: 'USA', // Placeholder location
+      picture: user.picture, 
     };
 
     let existingUser = await this.usersService.findUserByGithubId(user.id);

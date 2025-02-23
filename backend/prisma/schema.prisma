@@ -24,4 +24,5 @@ model User {
   email     String?  @unique
   github_id String? @unique
   role      String
+  picture   String?
 }

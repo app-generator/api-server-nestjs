@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Post,
@@ -17,7 +18,6 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Get()
-  @UseGuards(JwtAuthGuard)
   async findAll(
     @Query('page') page: string,
     @Query('size') size: string,
@@ -63,6 +63,12 @@ export class UsersController {
     // Update the user's information
     const updatedUser = await this.usersService.updateUser(id, user);
     return updatedUser;
+  }
+
+  @Delete(':id')
+  @UseGuards(JwtAuthGuard)
+  async deleteUser(@Param('id') id: number): Promise<void> {
+    await this.usersService.deleteUser(+id);
   }
 
   @Put(':id/role')

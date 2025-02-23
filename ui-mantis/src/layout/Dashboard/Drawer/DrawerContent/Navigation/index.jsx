@@ -14,16 +14,7 @@ import { useAuth } from 'contexts/authContext.jsx';
 export default function Navigation() {
  const {user} = useAuth()
 
-  const navGroups = menuItem.items.filter((item) => {
-    if (item.type && item.type === 'group') {
-      if (!user?.auth_token && item.id === 'users') {
-        // return item;
-        return
-      }
-
-      return item
-    }
-  }).map((item) => {
+  const navGroups = menuItem.items.map((item) => {
     switch (item.type) {
       case 'group':
         return <NavGroup key={item.id} item={item} />;
