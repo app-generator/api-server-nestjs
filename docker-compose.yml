@@ -1,0 +1,43 @@
+services:
+  backend:
+    build: ./backend
+    container_name: backend
+    ports:
+      - "3002:3000"
+    env_file:
+      - ./backend/.env
+    command: >
+      sh -c "
+        npx prisma generate
+        npx prisma migrate deploy
+        yarn start:prod
+      "
+    networks:
+      - app-network
+
+  frontend:
+    build: ./ui-mantis
+    container_name: frontend
+    ports:
+      - "4000:4000"
+    env_file:
+      - ./ui-mantis/.env
+    networks:
+      - app-network
+
+  nginx:
+    image: nginx:alpine
+    container_name: nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - backend
+      - frontend
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
