@@ -28,11 +28,13 @@ export default defineConfig({
   server: {
     strictPort: true,
     host: true,
-    origin: "http://0.0.0.0:4000",
+    origin: 'http://0.0.0.0:4000',
     port: 4000
   },
   preview: {
-    open: true,
+    strictPort: true,
+    host: true,
+    origin: 'http://0.0.0.0:4000',
     port: 4000
   }
 });
