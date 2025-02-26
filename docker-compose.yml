@@ -3,14 +3,14 @@ services:
     build: ./backend
     container_name: backend
     ports:
-      - "3002:3000"
+      - "3000:3000"
     env_file:
       - ./backend/.env
     command: >
       sh -c "
         npx prisma generate
         npx prisma migrate deploy
-        yarn start:prod
+        yarn start:dev
       "
     networks:
       - app-network
