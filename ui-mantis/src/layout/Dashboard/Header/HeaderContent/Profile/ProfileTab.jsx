@@ -22,12 +22,13 @@ import { useAuth } from 'contexts/authContext.jsx';
 
 export default function ProfileTab({ callback }) {
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const { user, setUser, logout} = useAuth();
+  const { user, setUser, logout } = useAuth();
 
   const navigate = useNavigate();
 
   const handleListItemClick = (event, index, path) => {
     setSelectedIndex(index);
+    callback();
     if (path) navigate(path);
   };
 
@@ -46,8 +47,8 @@ export default function ProfileTab({ callback }) {
 
   return (
     <List component="nav" sx={{ p: 0, '& .MuiListItemIcon-root': { minWidth: 32 } }}>
-      <ListItemButton 
-        selected={selectedIndex === 0} 
+      <ListItemButton
+        selected={selectedIndex === 0}
         onClick={(event) => handleListItemClick(event, 0, `/user/edit-profile/${user.id}`)}
       >
         <ListItemIcon>
@@ -55,9 +56,9 @@ export default function ProfileTab({ callback }) {
         </ListItemIcon>
         <ListItemText primary="Edit Profile" />
       </ListItemButton>
-      
-      <ListItemButton 
-        selected={selectedIndex === 1} 
+
+      <ListItemButton
+        selected={selectedIndex === 1}
         onClick={(event) => handleListItemClick(event, 1, '/apps/profiles/account/' + user.id)}
       >
         <ListItemIcon>
@@ -66,8 +67,8 @@ export default function ProfileTab({ callback }) {
         <ListItemText primary="View Profile" />
       </ListItemButton>
 
-      <ListItemButton 
-        selected={selectedIndex === 2} 
+      <ListItemButton
+        selected={selectedIndex === 2}
         onClick={(event) => handleListItemClick(event, 2, '/apps/profiles/account/' + user.id)}
       >
         <ListItemIcon>
@@ -76,8 +77,8 @@ export default function ProfileTab({ callback }) {
         <ListItemText primary="Social Profile" />
       </ListItemButton>
 
-      <ListItemButton 
-        selected={selectedIndex === 3} 
+      <ListItemButton
+        selected={selectedIndex === 3}
         onClick={(event) => handleListItemClick(event, 3, '/apps/invoice/details/1')}
       >
         <ListItemIcon>
@@ -86,8 +87,8 @@ export default function ProfileTab({ callback }) {
         <ListItemText primary="Billing" />
       </ListItemButton>
 
-      <ListItemButton 
-        selected={selectedIndex === 4} 
+      <ListItemButton
+        selected={selectedIndex === 4}
         onClick={() => handleLogout && handleLogout()}
       >
         <ListItemIcon>
