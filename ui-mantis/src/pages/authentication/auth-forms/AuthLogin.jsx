@@ -59,7 +59,9 @@ export default function AuthLogin({ isDemo = false }) {
         {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => (
           <form noValidate onSubmit={handleSubmit}>
             <Grid container spacing={3}>
-              <Grid item xs={12}>
+
+
+              {/* <Grid item xs={12}>
                 <Stack spacing={1}>
                   <InputLabel htmlFor="email-login">Email Address</InputLabel>
                   <OutlinedInput
@@ -114,7 +116,6 @@ export default function AuthLogin({ isDemo = false }) {
                   </FormHelperText>
                 )}
               </Grid>
-
               <Grid item xs={12} sx={{ mt: -1 }}>
                 <Stack direction="row" justifyContent="space-between" alignItems="center" spacing={2}>
                   <FormControlLabel
@@ -150,7 +151,8 @@ export default function AuthLogin({ isDemo = false }) {
                 <Divider>
                   <Typography variant="caption"> Login with</Typography>
                 </Divider>
-              </Grid>
+              </Grid> */}
+
               <Grid item xs={12}>
                 <FirebaseSocial />
               </Grid>

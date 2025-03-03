@@ -26,6 +26,7 @@ import { strengthColor, strengthIndicator } from 'utils/password-strength';
 // assets
 import EyeOutlined from '@ant-design/icons/EyeOutlined';
 import EyeInvisibleOutlined from '@ant-design/icons/EyeInvisibleOutlined';
+import FirebaseSocial from './FirebaseSocial';
 
 // ============================|| JWT - REGISTER ||============================ //
 
@@ -70,7 +71,7 @@ export default function AuthRegister() {
         {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => (
           <form noValidate onSubmit={handleSubmit}>
             <Grid container spacing={3}>
-              <Grid item xs={12} md={6}>
+              {/* <Grid item xs={12} md={6}>
                 <Stack spacing={1}>
                   <InputLabel htmlFor="firstname-signup">First Name*</InputLabel>
                   <OutlinedInput
@@ -229,7 +230,12 @@ export default function AuthRegister() {
                     Create Account
                   </Button>
                 </AnimateButton>
+              </Grid> */}
+
+              <Grid item xs={12}>
+                <FirebaseSocial />
               </Grid>
+
             </Grid>
           </form>
         )}
